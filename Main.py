@@ -4,6 +4,7 @@ import pandas as pd
 import random as rd
 import numpy as np
 
+# Parameters
 tax_rate = 0.27
 years = 40
 investment = 10000
@@ -11,7 +12,7 @@ rate = 12 * 450
 simulations = 10000
 final_returns = []
 
-# Imports the Data with Date, Returns and Inflation
+# Imports Data with Date, Returns and Inflation Columns
 data = pd.read_excel(r"D:\PyCharm\Return_Simulation\Data.xlsx")
 
 # Extract Inflation rates
@@ -36,6 +37,7 @@ def calc_return(years, investment, rate):
 for simulation in range(simulations):
     final_returns.append(calc_return(years, investment, rate))
 
+# Summary statistics
 total_investment = investment + years * rate
 final_returns = np.round(final_returns, 0)
 quint_low = np.quantile(final_returns, 0.05)
@@ -43,10 +45,10 @@ quint_high = np.quantile(final_returns, 0.95)
 quint_med = np.median(final_returns)
 quint_mean = np.mean(final_returns)
 
+# Print summary statistics
 print("Total Investment: " + str(total_investment))
 print("Lowest 5%: " + str(np.round((quint_low), 0)))
 print("Median: " + str(np.round(quint_med)))
 print("Mean: " + str(np.round(quint_mean)))
 print("Highest 5%: " + str(np.round((quint_high), 0)))
-
 
