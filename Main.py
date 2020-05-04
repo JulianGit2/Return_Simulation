@@ -33,9 +33,11 @@ def calc_return(years, investment, rate):
 
     return(investment)
 
+
 # Monte Carlo
 for simulation in range(simulations):
     final_returns.append(calc_return(years, investment, rate))
+
 
 # Summary statistics
 total_investment = investment + years * rate
@@ -50,5 +52,5 @@ print("Total Investment: " + str(total_investment))
 print("Lowest 5%: " + str(np.round((quint_low), 0)))
 print("Median: " + str(np.round(quint_med)))
 print("Mean: " + str(np.round(quint_mean)))
-print("Highest 5%: " + str(np.round((quint_high), 0)))
+print("Highest 5%: " + str(np.round(quint_high, 0)))
 
