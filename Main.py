@@ -4,10 +4,10 @@ import pandas as pd
 import random as rd
 import numpy as np
 
-tax_rate = 0.25
-years = 30
-investment = 1000
-rate = 450
+tax_rate = 0.27
+years = 40
+investment = 10000
+rate = 12 * 450
 simulations = 10000
 final_returns = []
 
@@ -37,11 +37,16 @@ for simulation in range(simulations):
     final_returns.append(calc_return(years, investment, rate))
 
 total_investment = investment + years * rate
-final_returns = np.round(final_returns, 1)
+final_returns = np.round(final_returns, 0)
 quint_low = np.quantile(final_returns, 0.05)
 quint_high = np.quantile(final_returns, 0.95)
+quint_med = np.median(final_returns)
+quint_mean = np.mean(final_returns)
+
+print("Total Investment: " + str(total_investment))
+print("Lowest 5%: " + str(np.round((quint_low), 0)))
+print("Median: " + str(np.round(quint_med)))
+print("Mean: " + str(np.round(quint_mean)))
+print("Highest 5%: " + str(np.round((quint_high), 0)))
 
 
-print(quint_low)
-print(quint_high)
-print(total_investment)
