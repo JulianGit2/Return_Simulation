@@ -3,6 +3,8 @@
 import pandas as pd
 import random as rd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Parameters
 tax_rate = 0.27
@@ -38,7 +40,6 @@ def calc_return(years, investment, rate):
 for simulation in range(simulations):
     final_returns.append(calc_return(years, investment, rate))
 
-
 # Summary statistics
 total_investment = investment + years * rate
 final_returns = np.round(final_returns, 0)
@@ -54,3 +55,9 @@ print("Median: " + str(np.round(quint_med)))
 print("Mean: " + str(np.round(quint_mean)))
 print("Highest 5%: " + str(np.round(quint_high, 0)))
 
+# Plot histogram
+plt.hist(final_returns, bins = 200)
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.xticks(np.arange(0, 5000000, step=200000))
+plt.show()
