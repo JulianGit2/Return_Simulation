@@ -6,14 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters
-taxRate = 0.27          # Tax Rate
-taxThreshold = 801      # Threshold for taxation
+tax_rate = 0.27          # Tax Rate
+tax_threshold = 801      # Threshold for taxation
 years = 40              # Number of years for investing
 investment = 10000      # Initial investment
 rate = 12 * 450         # Yearly investment
 simulations = 10000
-finalReturns = []
-finalReturns2 = []
+final_returns = []
+final_returns2 = []
 
 # Imports Data with Date, Returns and Inflation Columns
 data = pd.read_excel(r"D:\PyCharm\Return_Simulation\Data.xlsx")
@@ -25,7 +25,7 @@ inflation = pd.DataFrame(data, columns=["Inflation"]) + 1
 returns = pd.DataFrame(data, columns=["S&P_500"])
 
 # Calculates final return
-def Calc_Return(years, investment, rate):
+def calc_return(years, investment, rate):
 
     taxlcf = 0          # Tax Loss carried forward
 
@@ -37,20 +37,20 @@ def Calc_Return(years, investment, rate):
         perReturn = perReturn * investment
 
         if perReturn < 0:
-            taxlcf = taxlcf + abs(perReturn * taxRate)
-        elif perReturn > taxThreshold:
+            taxlcf = taxlcf + abs(perReturn * tax_rate)
+        elif perReturn > tax_threshold:
 
             # Pre Tax Return above tax Threshold
-            excessReturn = perReturn - taxThreshold
+            excessReturn = perReturn - tax_threshold
 
-            if taxlcf > excessReturn * taxRate:
-                taxlcf = taxlcf - excessReturn * taxRate
-            elif taxlcf <= excessReturn * taxRate:
-                excessReturn = excessReturn * (1-taxRate) + taxlcf
+            if taxlcf > excessReturn * tax_rate:
+                taxlcf = taxlcf - excessReturn * tax_rate
+            elif taxlcf <= excessReturn * tax_rate:
+                excessReturn = excessReturn * (1-tax_rate) + taxlcf
                 taxlcf = 0
 
             # After tax Return
-            perReturn = excessReturn + taxThreshold
+            perReturn = excessReturn + tax_threshold
 
         # Notional after taxes and inflation at the end of the period
         investment = (investment + perReturn + rate) / perInflation
@@ -58,13 +58,13 @@ def Calc_Return(years, investment, rate):
     return(investment)
 
 # Summary Statistics
-def Summary_Statistics(finalReturns, name):
+def summary_statistics(final_returns, name):
     total_investment = investment + years * rate
-    finalReturns = np.round(finalReturns, 0)
-    quint_low = np.quantile(finalReturns, 0.05)
-    quint_high = np.quantile(finalReturns, 0.95)
-    quint_med = np.median(finalReturns)
-    quint_mean = np.mean(finalReturns)
+    final_returns = np.round(final_returns, 0)
+    quint_low = np.quantile(final_returns, 0.05)
+    quint_high = np.quantile(final_returns, 0.95)
+    quint_med = np.median(final_returns)
+    quint_mean = np.mean(final_returns)
 
     print("Data Set: " + name)
     print("Total Investment: " + str(total_investment))
@@ -75,21 +75,21 @@ def Summary_Statistics(finalReturns, name):
 
 # Monte Carlo
 for simulation in range(simulations):
-    finalReturns.append(Calc_Return(years, investment, rate))
+    final_returns.append(calc_return(years, investment, rate))
 
 # Alternative tax Rate
-taxRate = 0.5
+tax_rate = 0.5
 
 for simulation in range(simulations):
-    finalReturns2.append(Calc_Return(years, investment, rate))
+    final_returns2.append(calc_return(years, investment, rate))
 
-Summary_Statistics(finalReturns, "Low Taxation:")
-Summary_Statistics(finalReturns2, "High Taxation:")
+summary_statistics(final_returns, "Low Taxation:")
+summary_statistics(final_returns2, "High Taxation:")
 
 # Plot histogram
 bins = np.linspace(0, 5000000, 200)
-plt.hist(finalReturns, bins, alpha=0.5, label="Low Taxation")
-plt.hist(finalReturns2, bins, alpha=0.5, label="High Taxation")
+plt.hist(final_returns, bins, alpha=0.5, label="Low Taxation")
+plt.hist(final_returns2, bins, alpha=0.5, label="High Taxation")
 plt.xlabel("Value")
 plt.ylabel("Frequency")
 plt.xticks(np.arange(0, 5000000, step=200000))
