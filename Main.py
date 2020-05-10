@@ -6,13 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters
-taxRate = 0.27         # Tax Rate
+taxRate = 0.27          # Tax Rate
 taxThreshold = 801      # Threshold for taxation
 years = 40              # Number of years for investing
 investment = 10000      # Initial investment
 rate = 12 * 450         # Yearly investment
 simulations = 10000
 finalReturns = []
+finalReturns2 = []
 
 # Imports Data with Date, Returns and Inflation Columns
 data = pd.read_excel(r"D:\PyCharm\Return_Simulation\Data.xlsx")
@@ -24,7 +25,7 @@ inflation = pd.DataFrame(data, columns=["Inflation"]) + 1
 returns = pd.DataFrame(data, columns=["S&P_500"])
 
 # Calculates final return
-def calc_return(years, investment, rate):
+def Calc_Return(years, investment, rate):
 
     taxlcf = 0          # Tax Loss carried forward
 
@@ -56,28 +57,41 @@ def calc_return(years, investment, rate):
 
     return(investment)
 
+# Summary Statistics
+def Summary_Statistics(finalReturns, name):
+    total_investment = investment + years * rate
+    finalReturns = np.round(finalReturns, 0)
+    quint_low = np.quantile(finalReturns, 0.05)
+    quint_high = np.quantile(finalReturns, 0.95)
+    quint_med = np.median(finalReturns)
+    quint_mean = np.mean(finalReturns)
+
+    print("Data Set: " + name)
+    print("Total Investment: " + str(total_investment))
+    print("Lowest 5%: " + str(np.round((quint_low), 0)))
+    print("Median: " + str(np.round(quint_med)))
+    print("Mean: " + str(np.round(quint_mean)))
+    print("Highest 5%: " + str(np.round(quint_high, 0)))
+
 # Monte Carlo
 for simulation in range(simulations):
-    finalReturns.append(calc_return(years, investment, rate))
+    finalReturns.append(Calc_Return(years, investment, rate))
 
-# Summary statistics
-total_investment = investment + years * rate
-finalReturns = np.round(finalReturns, 0)
-quint_low = np.quantile(finalReturns, 0.05)
-quint_high = np.quantile(finalReturns, 0.95)
-quint_med = np.median(finalReturns)
-quint_mean = np.mean(finalReturns)
+# Alternative tax Rate
+taxRate = 0.5
 
-# Print summary statistics
-print("Total Investment: " + str(total_investment))
-print("Lowest 5%: " + str(np.round((quint_low), 0)))
-print("Median: " + str(np.round(quint_med)))
-print("Mean: " + str(np.round(quint_mean)))
-print("Highest 5%: " + str(np.round(quint_high, 0)))
+for simulation in range(simulations):
+    finalReturns2.append(Calc_Return(years, investment, rate))
+
+Summary_Statistics(finalReturns, "Low Taxation:")
+Summary_Statistics(finalReturns2, "High Taxation:")
 
 # Plot histogram
-plt.hist(finalReturns, bins=200)
+bins = np.linspace(0, 5000000, 200)
+plt.hist(finalReturns, bins, alpha=0.5, label="Low Taxation")
+plt.hist(finalReturns2, bins, alpha=0.5, label="High Taxation")
 plt.xlabel("Value")
 plt.ylabel("Frequency")
 plt.xticks(np.arange(0, 5000000, step=200000))
+plt.legend(loc='upper right')
 plt.show()
